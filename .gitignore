@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+data/raw/
+# Split CSVs are large + contain machine-specific absolute paths; regenerate with
+# phase1/prepare_dataset.py. classes.txt is small and required by phase3/inference.py, so keep it.
+data/splits/*.csv
+!data/splits/classes.txt
+# Trained weights are not distributed (see README)
+checkpoints/*.pth
+phase3/uploads/
+web/node_modules/
+web/dist/
+*.log
+notes/*.csv
