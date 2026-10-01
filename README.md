@@ -8,6 +8,14 @@ with a rarity tier based on how rare it is to spot.
 > portfolio purposes. Trained model weights, training data, and internal planning
 > notes are not included. See [License](#license).
 
+## Demo
+
+<img src="docs/demo.gif" alt="CarSpotters demo: sign up, scan a Toyota Camry and a Ford Mustang, label an unrecognized AMC Gremlin, then view the CarDex" width="320">
+
+Recorded from the app running locally: two cars the model recognizes, one it
+doesn't (which goes to the "label it" flow), then the resulting CarDex. The
+photos are public-domain and CC0 images from Wikimedia Commons.
+
 ## Highlights
 
 - **Computer vision:** EfficientNet-B4 fine-tuned on ~300k images across 1,173
