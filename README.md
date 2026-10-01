@@ -1,7 +1,7 @@
 # CarSpotters
 
 A Pokémon-Go-style game for cars: photograph a car in the wild, a computer-vision
-model identifies the year/make/model, and it's added to your collection ("CarDex")
+model identifies the make and model, and it's added to your collection ("CarDex")
 with a rarity tier based on how rare it is to spot.
 
 > **Showcase repository.** This is a public, read-only snapshot of the source for
@@ -11,7 +11,7 @@ with a rarity tier based on how rare it is to spot.
 ## Highlights
 
 - **Computer vision:** EfficientNet-B4 fine-tuned on ~300k images across 1,173
-  year/make/model classes (Stanford Cars + VMMRdb). 87.0% top-1 on the Stanford Cars
+  make/model classes (Stanford Cars + VMMRdb). 87.0% top-1 on the Stanford Cars
   test split, 88.8% on VMMRdb.
 - **Vehicle catalog:** Postgres catalog seeded from the NHTSA vPIC API (53 makes,
   2,458 models, 61,450 rows), with each vehicle assigned a rarity tier.
@@ -22,6 +22,37 @@ with a rarity tier based on how rare it is to spot.
   Commons and records a provenance manifest for each image.
 - **App:** FastAPI backend (auth, identify, collection, data flywheel for
   unrecognized cars) and a React + Vite PWA (capture → identify → rarity card → CarDex).
+
+## Model-year coverage
+
+**In short: the classifier knows cars from roughly model years 1990–2016, and is
+strongest on 1995–2012. Nothing from 2017 onward is in the training data.**
+
+The classifier predicts **make and model only, not the year**. Each class pools
+every model year of that nameplate that appears in the training images, so a
+2004 and a 2014 Honda Civic are the same class. The years below are the model
+years of the cars in the ~300k training images.
+
+| Model years | Training images | Share |
+|---|---:|---:|
+| Before 1990 | 15,716 | 5.2% |
+| 1990–1999 | 54,540 | 18.1% |
+| 2000–2009 | 187,864 | 62.5% |
+| 2010–2016 | 42,645 | 14.2% |
+| 2017 and newer | 7 | 0.0% |
+
+- **Sources:** Stanford Cars covers model years 1991–2012; VMMRdb covers mostly
+  the 1950s through 2016, with a thin tail of older classics.
+- **Per class:** 894 of the 1,173 classes include cars from 2000 or later; the
+  other 279 are pre-2000 only (classics and discontinued models). Only 286
+  classes have any images from 2013–2016.
+- **Cars newer than 2016** are either not recognized (and go to the "label it"
+  flow) or matched to an older generation of the same nameplate. Models
+  introduced after 2016, such as the Tesla Model 3, have no class at all.
+- **Rarity catalog:** separate from the classifier, the NHTSA-seeded catalog
+  that assigns rarity tiers covers model years **2000–2024**. A recognized car
+  whose model isn't in the catalog (mostly pre-2000 classics and trucks) gets
+  its make's typical tier instead.
 
 ## Project layout
 
